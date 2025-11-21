@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "131019736594",
+    "project_id": "janazah-fe0dc",
+    "storage_bucket": "janazah-fe0dc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:131019736594:android:7951a02f3155c55cf53acb",
+        "android_client_info": {
+          "package_name": "com.example.janazty"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMaLI6qKT31rigrRPSi_DFyMdkaPA-Zyk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
