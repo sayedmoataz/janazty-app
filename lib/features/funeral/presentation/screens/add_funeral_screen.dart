@@ -1,15 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_strings.dart';
 import '../../domain/entity/funeral_entity.dart';
-import '../providers/funeral_provider.dart';
+import '../providers/funeral_notifier.dart';
+import 'map_picker_screen.dart';
 
 class AddFuneralScreen extends ConsumerStatefulWidget {
   const AddFuneralScreen({super.key});
@@ -20,360 +16,232 @@ class AddFuneralScreen extends ConsumerStatefulWidget {
 
 class _AddFuneralScreenState extends ConsumerState<AddFuneralScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _deceasedNameController = TextEditingController();
-  final _fatherNameController = TextEditingController();
   final _mosqueNameController = TextEditingController();
-  final _mosqueLocationController = TextEditingController();
-  final _notesController = TextEditingController();
+  final _deceasedNameController = TextEditingController();
 
-  String _gender = 'male';
-  DateTime _selectedDateTime = DateTime.now().add(const Duration(hours: 2));
+  DateTime? _selectedDateTime;
   double? _selectedLat;
   double? _selectedLng;
-  File? _selectedImage;
+  String _selectedGender = 'male';
   bool _isLoading = false;
 
   @override
   void dispose() {
-    _deceasedNameController.dispose();
-    _fatherNameController.dispose();
     _mosqueNameController.dispose();
-    _mosqueLocationController.dispose();
-    _notesController.dispose();
+    _deceasedNameController.dispose();
     super.dispose();
-  }
-
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      setState(() {
-        _selectedImage = File(pickedFile.path);
-      });
-    }
   }
 
   Future<void> _selectDateTime() async {
     final date = await showDatePicker(
       context: context,
-      initialDate: _selectedDateTime,
+      initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 7)),
     );
 
-    if (date != null && mounted) {
-      final time = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.fromDateTime(_selectedDateTime),
-      );
+    if (date == null) return;
 
-      if (time != null) {
-        setState(() {
-          _selectedDateTime = DateTime(
-            date.year,
-            date.month,
-            date.day,
-            time.hour,
-            time.minute,
-          );
-        });
-      }
-    }
+    if (!mounted) return;
+
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (time == null) return;
+
+    setState(() {
+      _selectedDateTime = DateTime(
+        date.year,
+        date.month,
+        date.day,
+        time.hour,
+        time.minute,
+      );
+    });
   }
 
   Future<void> _selectLocation() async {
-    // TODO: Implement Google Maps picker
-    // For now, use default coordinates
-    setState(() {
-      _selectedLat = 30.0444;
-      _selectedLng = 31.2357;
-    });
+    final result = await Navigator.push<LatLng>(
+      context,
+      MaterialPageRoute(builder: (context) => const MapPickerScreen()),
+    );
 
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تم تحديد الموقع - القاهرة')),
-      );
+    if (result != null) {
+      setState(() {
+        _selectedLat = result.latitude;
+        _selectedLng = result.longitude;
+      });
     }
   }
 
   Future<void> _submitFuneral() async {
     if (!_formKey.currentState!.validate()) return;
 
-    if (_selectedLat == null || _selectedLng == null) {
+    if (_selectedDateTime == null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('يرجى تحديد موقع المسجد')));
+      ).showSnackBar(const SnackBar(content: Text('من فضلك اختر موعد الصلاة')));
       return;
     }
 
-    setState(() {
-      _isLoading = true;
+    if (_selectedLat == null || _selectedLng == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('من فضلك اختر موقع المسجد')));
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    final funeral = FuneralEntity(
+      id: '',
+      deceasedName: _deceasedNameController.text.trim().isEmpty
+          ? 'غير معروف'
+          : _deceasedNameController.text.trim(),
+      gender: _selectedGender,
+      mosqueName: _mosqueNameController.text.trim(),
+      mosqueLocation: _mosqueNameController.text.trim(),
+      lat: _selectedLat!,
+      lng: _selectedLng!,
+      prayerTime: _selectedDateTime!,
+      publisherId: '',
+      isMosqueVerified: false,
+      createdAt: DateTime.now(),
+      prayedCount: 0,
+    );
+
+    await ref.read(funeralProvider.notifier).addFuneral(funeral);
+
+    if (!mounted) return;
+
+    ref.listen<AsyncValue<void>>(funeralProvider, (previous, next) {
+      next.when(
+        data: (_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('تم إضافة الجنازة بنجاح'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pop(context);
+        },
+        error: (error, stack) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('حدث خطأ: $error'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        },
+        loading: () {},
+      );
     });
 
-    try {
-      final funeral = FuneralEntity(
-        id: '',
-        deceasedName: _deceasedNameController.text.isEmpty
-            ? 'فقيد عائلة ${_fatherNameController.text}'
-            : _deceasedNameController.text,
-        gender: _gender,
-        mosqueName: _mosqueNameController.text,
-        mosqueLocation: _mosqueLocationController.text,
-        lat: _selectedLat!,
-        lng: _selectedLng!,
-        prayerTime: _selectedDateTime,
-        publisherId: 'anonymous',
-        isMosqueVerified: false,
-        createdAt: DateTime.now(),
-        fatherName: _fatherNameController.text.isEmpty
-            ? null
-            : _fatherNameController.text,
-        notes: _notesController.text.isEmpty ? null : _notesController.text,
-        prayedCount: 0,
-      );
-
-      // TODO: Upload image if selected
-      // TODO: Add funeral via provider
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم إضافة الجنازة بنجاح - جزاك الله خيراً'),
-            backgroundColor: AppColors.success,
-          ),
-        );
-        Navigator.pop(context);
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('حدث خطأ: $e'),
-            backgroundColor: AppColors.error,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
+    setState(() => _isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('إضافة جنازة'),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-      ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            const Text(
-              'معلومات المتوفى',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
+      appBar: AppBar(title: const Text('إضافة جنازة')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextFormField(
+                controller: _mosqueNameController,
+                decoration: const InputDecoration(
+                  labelText: 'اسم المسجد *',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'من فضلك أدخل اسم المسجد';
+                  }
+                  return null;
+                },
               ),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _deceasedNameController,
-              decoration: const InputDecoration(
-                labelText: 'اسم المتوفى (اختياري)',
-                hintText: 'سيتم استخدام "فقيد عائلة..." إذا ترك فارغاً',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _fatherNameController,
-              decoration: const InputDecoration(
-                labelText: 'اسم الأب أو العائلة',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: _gender,
-              decoration: const InputDecoration(
-                labelText: 'النوع',
-                border: OutlineInputBorder(),
-              ),
-              items: const [
-                DropdownMenuItem(value: 'male', child: Text('ذكر')),
-                DropdownMenuItem(value: 'female', child: Text('أنثى')),
-              ],
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    _gender = value;
-                  });
-                }
-              },
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'معلومات المسجد والموقع',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _mosqueNameController,
-              decoration: const InputDecoration(
-                labelText: 'اسم المسجد *',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'يرجى إدخال اسم المسجد';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _mosqueLocationController,
-              decoration: const InputDecoration(
-                labelText: 'عنوان المسجد *',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'يرجى إدخال عنوان المسجد';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: _selectLocation,
-              icon: const Icon(Icons.location_on),
-              label: Text(
-                _selectedLat != null
-                    ? 'تم تحديد الموقع'
-                    : 'حدد موقع المسجد على الخريطة',
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.info,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.all(16),
-              ),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'وقت الصلاة',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
-              ),
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              tileColor: AppColors.surface,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              leading: const Icon(Icons.access_time, color: AppColors.accent),
-              title: Text(
-                DateFormat(
-                  'EEEE، d MMMM yyyy - h:mm a',
-                  'ar',
-                ).format(_selectedDateTime),
-              ),
-              trailing: const Icon(Icons.edit),
-              onTap: _selectDateTime,
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'معلومات إضافية',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _notesController,
-              decoration: const InputDecoration(
-                labelText: 'ملاحظات (اختياري)',
-                hintText: 'مثل: موقف السيارات، معلومات إضافية',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 3,
-            ),
-            const SizedBox(height: 16),
-            if (_selectedImage != null)
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.file(
-                      _selectedImage!,
-                      height: 200,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _selectedImage = null;
-                        });
-                      },
-                      icon: const Icon(Icons.close),
-                      style: IconButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            const SizedBox(height: 16),
-            OutlinedButton.icon(
-              onPressed: _pickImage,
-              icon: const Icon(Icons.add_photo_alternate),
-              label: const Text('إضافة صورة (اختياري)'),
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.all(16),
-              ),
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: _isLoading ? null : _submitFuneral,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.accent,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.all(20),
-                textStyle: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _deceasedNameController,
+                decoration: const InputDecoration(
+                  labelText: 'اسم المتوفى (اختياري)',
+                  border: OutlineInputBorder(),
+                  hintText: 'سيكتب "فقيد عائلة..." إذا تُرك فارغًا',
                 ),
               ),
-              child: _isLoading
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text('نشر الجنازة'),
-            ),
-            const SizedBox(height: 16),
-          ],
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _selectedGender,
+                decoration: const InputDecoration(
+                  labelText: 'الجنس *',
+                  border: OutlineInputBorder(),
+                ),
+                items: const [
+                  DropdownMenuItem(value: 'male', child: Text('ذكر')),
+                  DropdownMenuItem(value: 'female', child: Text('أنثى')),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() => _selectedGender = value);
+                  }
+                },
+              ),
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                onPressed: _selectDateTime,
+                icon: const Icon(Icons.access_time),
+                label: Text(
+                  _selectedDateTime == null
+                      ? 'اختر موعد الصلاة *'
+                      : 'الموعد: ${_selectedDateTime!.day}/${_selectedDateTime!.month} - ${_selectedDateTime!.hour}:${_selectedDateTime!.minute.toString().padLeft(2, '0')}',
+                ),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.all(16),
+                ),
+              ),
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                onPressed: _selectLocation,
+                icon: const Icon(Icons.location_on),
+                label: Text(
+                  _selectedLat == null
+                      ? 'اختر موقع المسجد *'
+                      : 'تم اختيار الموقع ✓',
+                ),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.all(16),
+                  foregroundColor: _selectedLat != null ? Colors.green : null,
+                ),
+              ),
+              const SizedBox(height: 32),
+              ElevatedButton(
+                onPressed: _isLoading ? null : _submitFuneral,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(16),
+                  backgroundColor: AppColors.primary,
+                ),
+                child: _isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text(
+                        'إضافة الجنازة',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );

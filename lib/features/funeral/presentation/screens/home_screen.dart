@@ -41,7 +41,7 @@ class HomeScreen extends ConsumerWidget {
               itemCount: funerals.length,
               itemBuilder: (context, index) {
                 final funeral = funerals[index];
-                return FuneralCard(funeral: funeral, ref: ref);
+                return FuneralCard(funeral: funeral);
               },
             ),
           );

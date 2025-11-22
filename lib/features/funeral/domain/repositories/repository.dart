@@ -3,11 +3,11 @@ import '../entity/prayer_guide_entity.dart';
 import '../entity/service_entity.dart';
 
 abstract class FuneralRepository {
-  Stream<List<FuneralEntity>> getTodayAndTomorrowFunerals();
+  Stream<List<FuneralEntity>> getFunerals();
+  Future<FuneralEntity?> getFuneralById(String id);
   Future<void> addFuneral(FuneralEntity funeral);
   Future<void> incrementPrayCount(String funeralId);
-  Future<void> reportDuplicate(String funeralId, String reason);
-  Future<FuneralEntity?> getFuneralById(String id);
+  Future<void> reportFuneral(String funeralId);
 }
 
 abstract class ServiceRepository {

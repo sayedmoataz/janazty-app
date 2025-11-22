@@ -135,7 +135,7 @@ class _ServicesDirectoryScreenState
               loading: () => const Center(
                 child: CircularProgressIndicator(color: AppColors.accent),
               ),
-              error: (_, __) => const Center(
+              error: (_, _) => const Center(
                 child: Text(
                   'حدث خطأ في تحميل الخدمات',
                   style: TextStyle(color: AppColors.error),

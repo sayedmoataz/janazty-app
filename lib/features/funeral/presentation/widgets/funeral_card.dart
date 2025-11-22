@@ -1,36 +1,101 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../domain/entity/funeral_entity.dart';
-import '../providers/funeral_provider.dart';
+import '../providers/funeral_notifier.dart';
 
-class FuneralCard extends StatelessWidget {
+class FuneralCard extends ConsumerWidget {
   final FuneralEntity funeral;
-  final WidgetRef ref;
 
-  const FuneralCard({required this.funeral, required this.ref, super.key});
+  const FuneralCard({required this.funeral, super.key});
+
+  Future<void> _openInMaps(double lat, double lng) async {
+    final url = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=$lat,$lng',
+    );
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  void _shareFuneral(BuildContext context) {
+    final deceasedName =
+        funeral.deceasedName ?? 'فقيد عائلة ${funeral.mosqueName}';
+    final date = DateFormat('EEEE d MMMM', 'ar').format(funeral.prayerTime);
+    final time = DateFormat('h:mm a', 'ar').format(funeral.prayerTime);
+
+    final message =
+        '''
+🕌 صلاة الجنازة
+
+المتوفى: $deceasedName
+المسجد: ${funeral.mosqueName}
+الموعد: $date - $time
+
+الموقع: https://www.google.com/maps/search/?api=1&query=${funeral.lat},${funeral.lng}
+
+نسألكم الدعاء للميت
+''';
+
+    Share.share(message);
+  }
+
+  Future<void> _showReportDialog(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('تبليغ عن تكرار'),
+        content: const Text(
+          'هل أنت متأكد أن هذه الجنازة مكررة؟\nبعد 3 بلاغات سيتم إخفاء الجنازة للمراجعة.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('إلغاء'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('تأكيد', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed ?? false) {
+      await ref.read(funeralProvider.notifier).reportFuneral(funeral.id);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('تم إرسال البلاغ. شكرًا لمساعدتك في تحسين التطبيق'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    }
+  }
 
   @override
-  Widget build(BuildContext context) {
-    final time = DateFormat('h:mm a').format(funeral.prayerTime);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final deceasedName =
+        funeral.deceasedName ?? 'فقيد عائلة ${funeral.mosqueName}';
     final date = DateFormat('EEEE d MMMM', 'ar').format(funeral.prayerTime);
+    final time = DateFormat('h:mm a', 'ar').format(funeral.prayerTime);
 
     return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Header: Mosque Name + Verified Badge
             Row(
               children: [
-                const Icon(Icons.mosque, color: AppColors.primary),
-                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     funeral.mosqueName,
@@ -47,61 +112,89 @@ class FuneralCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.accent,
+                      color: Colors.blue.shade100,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text(
-                      'موثق',
-                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.verified,
+                          size: 16,
+                          color: Colors.blue.shade700,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'موثق',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.blue.shade700,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
               ],
             ),
-            const Divider(height: 20),
-            Text(
-              'المتوفى: ${funeral.deceasedName}',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text('الوقت: $time - $date', style: const TextStyle(fontSize: 16)),
-            Text('المكان: ${funeral.mosqueLocation}'),
             const SizedBox(height: 12),
+
+            // Deceased Name
+            Text(deceasedName, style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 8),
+
+            // Date & Time
             Row(
               children: [
-                ElevatedButton.icon(
-                  onPressed: () async {
-                    final url = Uri.parse(
-                      'https://www.google.com/maps?q=${funeral.lat},${funeral.lng}',
-                    );
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(url);
-                    }
-                  },
-                  icon: const Icon(Icons.location_on),
-                  label: const Text('افتح في الخريطة'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.info,
+                const Icon(Icons.access_time, size: 16, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text(
+                  '$time - $date',
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Action Buttons
+            Row(
+              children: [
+                // Prayed Button
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      await ref
+                          .read(funeralProvider.notifier)
+                          .incrementPrayCount(funeral.id);
+                    },
+                    icon: const Icon(Icons.check_circle_outline, size: 18),
+                    label: Text('صلّيت عليه (${funeral.prayedCount})'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.primary,
+                    ),
                   ),
                 ),
-                const Spacer(),
-                TextButton.icon(
-                  onPressed: () async {
-                    await ref.read(prayCountProvider(funeral.id).future);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('جزاك الله خيراً! تم التسجيل'),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.people, color: AppColors.accent),
-                  label: Text(
-                    '${funeral.prayedCount ?? 0} صلّوا',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                const SizedBox(width: 8),
+
+                // Map Button
+                IconButton(
+                  onPressed: () => _openInMaps(funeral.lat, funeral.lng),
+                  icon: const Icon(Icons.map, color: AppColors.primary),
+                  tooltip: 'افتح في الخريطة',
+                ),
+
+                // Share Button
+                IconButton(
+                  onPressed: () => _shareFuneral(context),
+                  icon: const Icon(Icons.share, color: AppColors.primary),
+                  tooltip: 'مشاركة',
+                ),
+
+                // Report Button
+                IconButton(
+                  onPressed: () => _showReportDialog(context, ref),
+                  icon: const Icon(Icons.flag_outlined, color: Colors.grey),
+                  tooltip: 'بلّغ عن تكرار',
                 ),
               ],
             ),

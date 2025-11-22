@@ -17,8 +17,6 @@ import '../../services/notification/firebase_notification_service.dart';
 import '../../services/notification/notification_service.dart';
 import '../../services/remote_config/firebase_remote_config_service.dart';
 import '../../services/remote_config/remote_config_service.dart';
-import '../../services/storage/firebase_storage_service.dart';
-import '../../services/storage/storage_service.dart';
 
 final sl = GetIt.instance;
 
@@ -37,7 +35,6 @@ Future<void> init() async {
     FirebaseNotificationService.new,
   );
   sl.registerLazySingleton<LocationService>(GeolocatorLocationService.new);
-  sl.registerLazySingleton<StorageService>(FirebaseStorageService.new);
   sl.registerLazySingleton(AudioPlayerService.new);
 
   // Data sources
@@ -52,7 +49,9 @@ Future<void> init() async {
   );
 
   // Repositories
-  sl.registerLazySingleton<FuneralRepository>(FuneralRepositoryImpl.new);
+  sl.registerLazySingleton<FuneralRepository>(
+    () => FuneralRepositoryImpl(sl()),
+  );
   sl.registerLazySingleton<ServiceRepository>(
     () => ServiceRepositoryImpl(sl()),
   );

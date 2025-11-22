@@ -144,7 +144,6 @@ class AboutAppScreen extends StatelessWidget {
             const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: () {
-                // TODO: Implement share app
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('شارك التطبيق مع أصدقائك')),
                 );
