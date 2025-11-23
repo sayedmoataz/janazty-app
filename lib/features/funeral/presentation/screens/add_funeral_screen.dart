@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_strings.dart';
+import '../../../../core/widgets/custom_outlined_button.dart';
+import '../../../../core/widgets/custom_text_field.dart';
 import '../../domain/entity/funeral_entity.dart';
 import '../providers/funeral_notifier.dart';
-import 'map_picker_screen.dart';
+// import 'map_picker_screen.dart';
 
 class AddFuneralScreen extends ConsumerStatefulWidget {
   const AddFuneralScreen({super.key});
@@ -20,8 +24,8 @@ class _AddFuneralScreenState extends ConsumerState<AddFuneralScreen> {
   final _deceasedNameController = TextEditingController();
 
   DateTime? _selectedDateTime;
-  double? _selectedLat;
-  double? _selectedLng;
+  // double? _selectedLat;
+  // double? _selectedLng;
   String _selectedGender = 'male';
   bool _isLoading = false;
 
@@ -62,49 +66,51 @@ class _AddFuneralScreenState extends ConsumerState<AddFuneralScreen> {
     });
   }
 
-  Future<void> _selectLocation() async {
-    final result = await Navigator.push<LatLng>(
-      context,
-      MaterialPageRoute(builder: (context) => const MapPickerScreen()),
-    );
-
-    if (result != null) {
-      setState(() {
-        _selectedLat = result.latitude;
-        _selectedLng = result.longitude;
-      });
-    }
-  }
+  // TODO: Uncomment when map selection is ready
+  // Future<void> _selectLocation() async {
+  //   final result = await Navigator.push<LatLng>(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => const MapPickerScreen()),
+  //   );
+  //
+  //   if (result != null) {
+  //     setState(() {
+  //       _selectedLat = result.latitude;
+  //       _selectedLng = result.longitude;
+  //     });
+  //   }
+  // }
 
   Future<void> _submitFuneral() async {
     if (!_formKey.currentState!.validate()) return;
 
     if (_selectedDateTime == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('من فضلك اختر موعد الصلاة')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(AppStrings.pleaseSelectPrayerTime)),
+      );
       return;
     }
 
-    if (_selectedLat == null || _selectedLng == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('من فضلك اختر موقع المسجد')));
-      return;
-    }
+    // TODO: Uncomment when map selection is ready
+    // if (_selectedLat == null || _selectedLng == null) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(content: Text(AppStrings.pleaseSelectLocation)),
+    //   );
+    //   return;
+    // }
 
     setState(() => _isLoading = true);
 
     final funeral = FuneralEntity(
       id: '',
       deceasedName: _deceasedNameController.text.trim().isEmpty
-          ? 'غير معروف'
+          ? AppStrings.unknownDeceased
           : _deceasedNameController.text.trim(),
       gender: _selectedGender,
       mosqueName: _mosqueNameController.text.trim(),
       mosqueLocation: _mosqueNameController.text.trim(),
-      lat: _selectedLat!,
-      lng: _selectedLng!,
+      lat: 0.0, // TODO: Use _selectedLat when map is ready
+      lng: 0.0, // TODO: Use _selectedLng when map is ready
       prayerTime: _selectedDateTime!,
       publisherId: '',
       isMosqueVerified: false,
@@ -112,40 +118,40 @@ class _AddFuneralScreenState extends ConsumerState<AddFuneralScreen> {
       prayedCount: 0,
     );
 
-    await ref.read(funeralProvider.notifier).addFuneral(funeral);
+    try {
+      await ref.read(funeralProvider.notifier).addFuneral(funeral);
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    ref.listen<AsyncValue<void>>(funeralProvider, (previous, next) {
-      next.when(
-        data: (_) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('تم إضافة الجنازة بنجاح'),
-              backgroundColor: Colors.green,
-            ),
-          );
-          Navigator.pop(context);
-        },
-        error: (error, stack) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('حدث خطأ: $error'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        },
-        loading: () {},
+      setState(() => _isLoading = false);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(AppStrings.funeralAddedSuccess),
+          backgroundColor: AppColors.success,
+        ),
       );
-    });
 
-    setState(() => _isLoading = false);
+      Navigator.pop(context);
+    } catch (error) {
+      if (!mounted) return;
+
+      setState(() => _isLoading = false);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${AppStrings.errorOccurred}: $error'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('إضافة جنازة')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -153,38 +159,38 @@ class _AddFuneralScreenState extends ConsumerState<AddFuneralScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextFormField(
+              CustomTextField(
+                controller: _deceasedNameController,
+                labelText: AppStrings.deceasedNameLabel,
+                hintText: AppStrings.deceasedNameHint,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
                 controller: _mosqueNameController,
-                decoration: const InputDecoration(
-                  labelText: 'اسم المسجد *',
-                  border: OutlineInputBorder(),
-                ),
+                labelText: AppStrings.mosqueNameLabel,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'من فضلك أدخل اسم المسجد';
+                    return AppStrings.pleaseEnterMosqueName;
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _deceasedNameController,
-                decoration: const InputDecoration(
-                  labelText: 'اسم المتوفى (اختياري)',
-                  border: OutlineInputBorder(),
-                  hintText: 'سيكتب "فقيد عائلة..." إذا تُرك فارغًا',
-                ),
-              ),
-              const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _selectedGender,
                 decoration: const InputDecoration(
-                  labelText: 'الجنس *',
+                  labelText: AppStrings.genderLabel,
                   border: OutlineInputBorder(),
                 ),
                 items: const [
-                  DropdownMenuItem(value: 'male', child: Text('ذكر')),
-                  DropdownMenuItem(value: 'female', child: Text('أنثى')),
+                  DropdownMenuItem(
+                    value: 'male',
+                    child: Text(AppStrings.genderMale),
+                  ),
+                  DropdownMenuItem(
+                    value: 'female',
+                    child: Text(AppStrings.genderFemale),
+                  ),
                 ],
                 onChanged: (value) {
                   if (value != null) {
@@ -193,33 +199,25 @@ class _AddFuneralScreenState extends ConsumerState<AddFuneralScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              OutlinedButton.icon(
+              CustomOutlinedButton(
                 onPressed: _selectDateTime,
-                icon: const Icon(Icons.access_time),
-                label: Text(
-                  _selectedDateTime == null
-                      ? 'اختر موعد الصلاة *'
-                      : 'الموعد: ${_selectedDateTime!.day}/${_selectedDateTime!.month} - ${_selectedDateTime!.hour}:${_selectedDateTime!.minute.toString().padLeft(2, '0')}',
-                ),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.all(16),
-                ),
+                icon: Icons.access_time,
+                label: _selectedDateTime == null
+                    ? AppStrings.selectPrayerTime
+                    : 'الموعد: ${_selectedDateTime!.day}/${_selectedDateTime!.month} - ${_selectedDateTime!.hour}:${_selectedDateTime!.minute.toString().padLeft(2, '0')}',
               ),
               const SizedBox(height: 16),
-              OutlinedButton.icon(
-                onPressed: _selectLocation,
-                icon: const Icon(Icons.location_on),
-                label: Text(
-                  _selectedLat == null
-                      ? 'اختر موقع المسجد *'
-                      : 'تم اختيار الموقع ✓',
-                ),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.all(16),
-                  foregroundColor: _selectedLat != null ? Colors.green : null,
-                ),
-              ),
-              const SizedBox(height: 32),
+              // TODO: Uncomment when map selection is ready
+              // CustomOutlinedButton(
+              //   onPressed: _selectLocation,
+              //   icon: Icons.location_on,
+              //   label: _selectedLat == null
+              //       ? AppStrings.selectMosqueLocation
+              //       : AppStrings.locationSelected,
+              //   foregroundColor: _selectedLat != null ? AppColors.success : null,
+              // ),
+              // const SizedBox(height: 32),
+              const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _isLoading ? null : _submitFuneral,
                 style: ElevatedButton.styleFrom(
@@ -232,12 +230,12 @@ class _AddFuneralScreenState extends ConsumerState<AddFuneralScreen> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Colors.white,
+                          color: AppColors.white,
                         ),
                       )
                     : const Text(
-                        'إضافة الجنازة',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
+                        AppStrings.submitFuneral,
+                        style: TextStyle(fontSize: 16, color: AppColors.white),
                       ),
               ),
             ],

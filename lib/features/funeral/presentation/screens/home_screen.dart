@@ -3,7 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:janazty/core/constants/app_colors.dart';
 import 'package:janazty/features/funeral/presentation/providers/funeral_provider.dart';
 
+import '../../../../core/navigation/app_navigation_provider.dart';
+import '../widgets/empty_funeral_screen.dart';
 import '../widgets/funeral_card.dart';
+import '../widgets/funeral_error_screen.dart';
+import '../widgets/funeral_loading_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -13,25 +17,10 @@ class HomeScreen extends ConsumerWidget {
     final funeralsAsync = ref.watch(funeralsProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'جنازتي',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-      ),
       body: funeralsAsync.when(
         data: (funerals) {
           if (funerals.isEmpty) {
-            return const Center(
-              child: Text(
-                'لا توجد جنازات اليوم أو غداً\nالحمد لله على كل حال',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, color: AppColors.textSecondary),
-              ),
-            );
+            return const NoFuneralScreen();
           }
 
           return RefreshIndicator(
@@ -46,23 +35,14 @@ class HomeScreen extends ConsumerWidget {
             ),
           );
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.accent),
-        ),
-        error: (_, _) => const Center(
-          child: Text('حدث خطأ', style: TextStyle(color: AppColors.error)),
-        ),
+        loading: () => const FuneralLoadingScreen(),
+        error: (_, _) => const FuneralErrorScreen(),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.accent,
-        child: const Icon(Icons.add, color: Colors.white),
+        child: const Icon(Icons.add, color: AppColors.primary),
         onPressed: () {
-          // هنعمل شاشة الإضافة بعدين
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('شاشة إضافة جنازة - قريباً إن شاء الله'),
-            ),
-          );
+          ref.read(appNavigationProvider.notifier).setIndex(1);
         },
       ),
     );

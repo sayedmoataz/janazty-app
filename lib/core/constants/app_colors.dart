@@ -34,4 +34,6 @@ class AppColors {
   static const Color overlay = Color(0x990F1A2B);
 
   static const Color white = Colors.white;
+
+  static const Color transparentColor = Colors.transparent;
 }
