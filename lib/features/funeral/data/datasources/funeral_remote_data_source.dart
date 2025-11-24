@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../domain/entity/funeral_entity.dart';
@@ -24,11 +26,11 @@ class FuneralRemoteDataSourceImpl implements FuneralRemoteDataSource {
 
     return _firestore
         .collection('funerals')
-        .where('hidden', isEqualTo: false)
         .where('prayerTime', isGreaterThanOrEqualTo: Timestamp.fromDate(today))
         .where('prayerTime', isLessThan: Timestamp.fromDate(dayAfterTomorrow))
         .snapshots()
         .map((snapshot) {
+          log('snapshots: ${snapshot.docs.length}');
           // Sort in memory instead of orderBy to avoid composite index requirement
           final docs = snapshot.docs;
           docs.sort((a, b) {
@@ -39,6 +41,11 @@ class FuneralRemoteDataSourceImpl implements FuneralRemoteDataSource {
 
           return docs
               .map((doc) => FuneralModel.fromFirestore(doc).toEntity())
+              .where((funeral) {
+                // Filter out funerals with 3 or more reports
+                final reportCount = funeral.reportCount ?? 0;
+                return reportCount < 3;
+              })
               .toList();
         });
   }
@@ -69,7 +76,12 @@ class FuneralRemoteDataSourceImpl implements FuneralRemoteDataSource {
 
   @override
   Future<void> reportFuneral(String funeralId) async {
-    // Add report
+    // Increment report count on the funeral document
+    await _firestore.collection('funerals').doc(funeralId).update({
+      'reportCount': FieldValue.increment(1),
+    });
+
+    // Add report to reports collection for tracking
     await _firestore.collection('reports').add({
       'funeralId': funeralId,
       'reportedAt': FieldValue.serverTimestamp(),

@@ -30,6 +30,16 @@ class AppStrings {
   static const String genderLabel = 'الجنس *';
   static const String genderMale = 'ذكر';
   static const String genderFemale = 'أنثى';
+  static const String burialLocationLabel = 'مكان الدفن / المقابر (اختياري)';
+  static const String burialLocationHint = 'مثال: مقابر العائلة، مقابر المدينة';
+  static const String ageTypeLabel = 'المتوفى';
+  static const String ageTypeAdult = 'بالغ';
+  static const String ageTypeChild = 'طفل';
+  static const String funeralNotesLabel = 'ملاحظات حول الجنازة (اختياري)';
+  static const String funeralNotesHint =
+      'مثال: الجنازة في الغسل، جاري استخراج التصاريح';
+  static const String deceasedNotesLabel = 'ملاحظات حول المتوفى (اختياري)';
+  static const String deceasedNotesHint = 'مثال: من عائلة فلان، نسيب فلان';
   static const String selectPrayerTime = 'اختر موعد الصلاة *';
   static const String selectMosqueLocation = 'اختر موقع المسجد *';
   static const String locationSelected = 'تم اختيار الموقع ✓';

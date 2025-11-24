@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../features/funeral/data/datasources/funeral_remote_data_source.dart';
 import '../../features/funeral/data/datasources/prayer_guide_remote_data_source.dart';
@@ -17,6 +18,8 @@ import '../../services/notification/firebase_notification_service.dart';
 import '../../services/notification/notification_service.dart';
 import '../../services/remote_config/firebase_remote_config_service.dart';
 import '../../services/remote_config/remote_config_service.dart';
+import '../../services/storage/shared_preferences_storage_service.dart';
+import '../../services/storage/storage_service.dart';
 
 final sl = GetIt.instance;
 
@@ -24,7 +27,14 @@ Future<void> init() async {
   // External
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
 
+  // Initialize SharedPreferences
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sl.registerLazySingleton(() => sharedPreferences);
+
   // Services
+  sl.registerLazySingleton<StorageService>(
+    () => SharedPreferencesStorageService(sl()),
+  );
   sl.registerLazySingleton<CrashReportingService>(
     FirebaseCrashReportingService.new,
   );

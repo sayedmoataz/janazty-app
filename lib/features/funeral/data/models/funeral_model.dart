@@ -26,9 +26,12 @@ abstract class FuneralModel with _$FuneralModel {
     required DateTime createdAt,
     String? fatherName,
     String? burialLocation,
+    String? ageType,
+    String? funeralNotes,
     String? notes,
     String? photoUrl,
     int? prayedCount,
+    int? reportCount,
   }) = _FuneralModel;
 
   factory FuneralModel.fromJson(Map<String, dynamic> json) =>
@@ -54,9 +57,12 @@ abstract class FuneralModel with _$FuneralModel {
       createdAt: createdAt,
       fatherName: fatherName,
       burialLocation: burialLocation,
+      ageType: ageType,
+      funeralNotes: funeralNotes,
       notes: notes,
       photoUrl: photoUrl,
       prayedCount: prayedCount,
+      reportCount: reportCount,
     );
   }
 
@@ -75,9 +81,12 @@ abstract class FuneralModel with _$FuneralModel {
       createdAt: entity.createdAt,
       fatherName: entity.fatherName,
       burialLocation: entity.burialLocation,
+      ageType: entity.ageType,
+      funeralNotes: entity.funeralNotes,
       notes: entity.notes,
       photoUrl: entity.photoUrl,
       prayedCount: entity.prayedCount,
+      reportCount: entity.reportCount,
     );
   }
 }

@@ -13,30 +13,54 @@ class FuneralNotifier extends _$FuneralNotifier {
   FutureOr<void> build() {}
 
   Future<void> addFuneral(FuneralEntity funeral) async {
+    if (!ref.mounted) return;
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
+
+    final result = await AsyncValue.guard(() async {
       final repo = ref.read(funeralRepositoryProvider);
       await repo.addFuneral(funeral);
-      // Refresh funerals list
-      ref.invalidate(funeralsProvider);
     });
+
+    if (!ref.mounted) return;
+    state = result;
+
+    // Refresh funerals list
+    if (ref.mounted) {
+      ref.invalidate(funeralsProvider);
+    }
   }
 
   Future<void> incrementPrayCount(String funeralId) async {
-    state = await AsyncValue.guard(() async {
+    if (!ref.mounted) return;
+
+    final result = await AsyncValue.guard(() async {
       final repo = ref.read(funeralRepositoryProvider);
       await repo.incrementPrayCount(funeralId);
-      // Refresh funerals list
-      ref.invalidate(funeralsProvider);
     });
+
+    if (!ref.mounted) return;
+    state = result;
+
+    // Refresh funerals list
+    if (ref.mounted) {
+      ref.invalidate(funeralsProvider);
+    }
   }
 
   Future<void> reportFuneral(String funeralId) async {
-    state = await AsyncValue.guard(() async {
+    if (!ref.mounted) return;
+
+    final result = await AsyncValue.guard(() async {
       final repo = ref.read(funeralRepositoryProvider);
       await repo.reportFuneral(funeralId);
-      // Refresh funerals list
-      ref.invalidate(funeralsProvider);
     });
+
+    if (!ref.mounted) return;
+    state = result;
+
+    // Refresh funerals list
+    if (ref.mounted) {
+      ref.invalidate(funeralsProvider);
+    }
   }
 }

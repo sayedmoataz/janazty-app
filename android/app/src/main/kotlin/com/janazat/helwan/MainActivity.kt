@@ -1,4 +1,4 @@
-package com.example.janazty
+package com.janazat.helwan
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -22,17 +22,24 @@ class _AddFuneralScreenState extends ConsumerState<AddFuneralScreen> {
   final _formKey = GlobalKey<FormState>();
   final _mosqueNameController = TextEditingController();
   final _deceasedNameController = TextEditingController();
+  final _burialLocationController = TextEditingController();
+  final _funeralNotesController = TextEditingController();
+  final _deceasedNotesController = TextEditingController();
 
   DateTime? _selectedDateTime;
   // double? _selectedLat;
   // double? _selectedLng;
   String _selectedGender = 'male';
+  String _selectedAgeType = 'adult';
   bool _isLoading = false;
 
   @override
   void dispose() {
     _mosqueNameController.dispose();
     _deceasedNameController.dispose();
+    _burialLocationController.dispose();
+    _funeralNotesController.dispose();
+    _deceasedNotesController.dispose();
     super.dispose();
   }
 
@@ -116,6 +123,16 @@ class _AddFuneralScreenState extends ConsumerState<AddFuneralScreen> {
       isMosqueVerified: false,
       createdAt: DateTime.now(),
       prayedCount: 0,
+      burialLocation: _burialLocationController.text.trim().isEmpty
+          ? null
+          : _burialLocationController.text.trim(),
+      ageType: _selectedAgeType,
+      funeralNotes: _funeralNotesController.text.trim().isEmpty
+          ? null
+          : _funeralNotesController.text.trim(),
+      notes: _deceasedNotesController.text.trim().isEmpty
+          ? null
+          : _deceasedNotesController.text.trim(),
     );
 
     try {
@@ -134,7 +151,22 @@ class _AddFuneralScreenState extends ConsumerState<AddFuneralScreen> {
         ),
       );
 
-      Navigator.pop(context);
+      // Reset form
+      _formKey.currentState!.reset();
+      _mosqueNameController.clear();
+      _deceasedNameController.clear();
+      _burialLocationController.clear();
+      _funeralNotesController.clear();
+      _deceasedNotesController.clear();
+      setState(() {
+        _selectedDateTime = null;
+        _selectedGender = 'male';
+        _selectedAgeType = 'adult';
+      });
+
+      // Navigate to home screen
+      if (!mounted) return;
+      Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
     } catch (error) {
       if (!mounted) return;
 
@@ -165,17 +197,6 @@ class _AddFuneralScreenState extends ConsumerState<AddFuneralScreen> {
                 hintText: AppStrings.deceasedNameHint,
               ),
               const SizedBox(height: 16),
-              CustomTextField(
-                controller: _mosqueNameController,
-                labelText: AppStrings.mosqueNameLabel,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return AppStrings.pleaseEnterMosqueName;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _selectedGender,
                 decoration: const InputDecoration(
@@ -197,6 +218,76 @@ class _AddFuneralScreenState extends ConsumerState<AddFuneralScreen> {
                     setState(() => _selectedGender = value);
                   }
                 },
+              ),
+              const SizedBox(height: 16),
+              // Age Type Radio Buttons
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    AppStrings.ageTypeLabel,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RadioListTile<String>(
+                          title: const Text(AppStrings.ageTypeAdult),
+                          value: 'adult',
+                          groupValue: _selectedAgeType,
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() => _selectedAgeType = value);
+                            }
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: RadioListTile<String>(
+                          title: const Text(AppStrings.ageTypeChild),
+                          value: 'child',
+                          groupValue: _selectedAgeType,
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() => _selectedAgeType = value);
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: _burialLocationController,
+                labelText: AppStrings.burialLocationLabel,
+                hintText: AppStrings.burialLocationHint,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: _mosqueNameController,
+                labelText: AppStrings.mosqueNameLabel,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return AppStrings.pleaseEnterMosqueName;
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: _funeralNotesController,
+                labelText: AppStrings.funeralNotesLabel,
+                hintText: AppStrings.funeralNotesHint,
+                maxLines: 3,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: _deceasedNotesController,
+                labelText: AppStrings.deceasedNotesLabel,
+                hintText: AppStrings.deceasedNotesHint,
+                maxLines: 3,
               ),
               const SizedBox(height: 16),
               CustomOutlinedButton(

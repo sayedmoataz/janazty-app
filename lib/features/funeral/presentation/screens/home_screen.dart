@@ -20,13 +20,21 @@ class HomeScreen extends ConsumerWidget {
       body: funeralsAsync.when(
         data: (funerals) {
           if (funerals.isEmpty) {
-            return const NoFuneralScreen();
+            return RefreshIndicator(
+              onRefresh: () async => ref.refresh(funeralsProvider),
+              child: const NoFuneralScreen(),
+            );
           }
 
           return RefreshIndicator(
             onRefresh: () async => ref.refresh(funeralsProvider),
             child: ListView.builder(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.only(
+                top: 12,
+                left: 12,
+                right: 12,
+                bottom: 80,
+              ),
               itemCount: funerals.length,
               itemBuilder: (context, index) {
                 final funeral = funerals[index];

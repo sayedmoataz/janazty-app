@@ -21,9 +21,12 @@ _FuneralModel _$FuneralModelFromJson(Map<String, dynamic> json) =>
       createdAt: _timestampFromJson(json['createdAt']),
       fatherName: json['fatherName'] as String?,
       burialLocation: json['burialLocation'] as String?,
+      ageType: json['ageType'] as String?,
+      funeralNotes: json['funeralNotes'] as String?,
       notes: json['notes'] as String?,
       photoUrl: json['photoUrl'] as String?,
       prayedCount: (json['prayedCount'] as num?)?.toInt(),
+      reportCount: (json['reportCount'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$FuneralModelToJson(_FuneralModel instance) =>
@@ -41,7 +44,10 @@ Map<String, dynamic> _$FuneralModelToJson(_FuneralModel instance) =>
       'createdAt': _timestampToJson(instance.createdAt),
       'fatherName': instance.fatherName,
       'burialLocation': instance.burialLocation,
+      'ageType': instance.ageType,
+      'funeralNotes': instance.funeralNotes,
       'notes': instance.notes,
       'photoUrl': instance.photoUrl,
       'prayedCount': instance.prayedCount,
+      'reportCount': instance.reportCount,
     };

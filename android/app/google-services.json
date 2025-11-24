@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:131019736594:android:7951a02f3155c55cf53acb",
+        "mobilesdk_app_id": "1:131019736594:android:360f48030b0ee92df53acb",
         "android_client_info": {
-          "package_name": "com.example.janazty"
+          "package_name": "com.janazat.helwan"
         }
       },
       "oauth_client": [],

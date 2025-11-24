@@ -21,9 +21,12 @@ _FuneralEntity _$FuneralEntityFromJson(Map<String, dynamic> json) =>
       createdAt: DateTime.parse(json['createdAt'] as String),
       fatherName: json['fatherName'] as String?,
       burialLocation: json['burialLocation'] as String?,
+      ageType: json['ageType'] as String?,
+      funeralNotes: json['funeralNotes'] as String?,
       notes: json['notes'] as String?,
       photoUrl: json['photoUrl'] as String?,
       prayedCount: (json['prayedCount'] as num?)?.toInt(),
+      reportCount: (json['reportCount'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$FuneralEntityToJson(_FuneralEntity instance) =>
@@ -41,7 +44,10 @@ Map<String, dynamic> _$FuneralEntityToJson(_FuneralEntity instance) =>
       'createdAt': instance.createdAt.toIso8601String(),
       'fatherName': instance.fatherName,
       'burialLocation': instance.burialLocation,
+      'ageType': instance.ageType,
+      'funeralNotes': instance.funeralNotes,
       'notes': instance.notes,
       'photoUrl': instance.photoUrl,
       'prayedCount': instance.prayedCount,
+      'reportCount': instance.reportCount,
     };

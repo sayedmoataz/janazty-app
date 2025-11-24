@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$FuneralEntity {
 
- String get id; String get deceasedName; String get gender; String get mosqueName; String get mosqueLocation; double get lat; double get lng; DateTime get prayerTime; String get publisherId; bool get isMosqueVerified; DateTime get createdAt; String? get fatherName; String? get burialLocation; String? get notes; String? get photoUrl; int? get prayedCount;
+ String get id; String get deceasedName; String get gender; String get mosqueName; String get mosqueLocation; double get lat; double get lng; DateTime get prayerTime; String get publisherId; bool get isMosqueVerified; DateTime get createdAt; String? get fatherName; String? get burialLocation; String? get ageType; String? get funeralNotes; String? get notes; String? get photoUrl; int? get prayedCount; int? get reportCount;
 /// Create a copy of FuneralEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $FuneralEntityCopyWith<FuneralEntity> get copyWith => _$FuneralEntityCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FuneralEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.deceasedName, deceasedName) || other.deceasedName == deceasedName)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.mosqueName, mosqueName) || other.mosqueName == mosqueName)&&(identical(other.mosqueLocation, mosqueLocation) || other.mosqueLocation == mosqueLocation)&&(identical(other.lat, lat) || other.lat == lat)&&(identical(other.lng, lng) || other.lng == lng)&&(identical(other.prayerTime, prayerTime) || other.prayerTime == prayerTime)&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.isMosqueVerified, isMosqueVerified) || other.isMosqueVerified == isMosqueVerified)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.fatherName, fatherName) || other.fatherName == fatherName)&&(identical(other.burialLocation, burialLocation) || other.burialLocation == burialLocation)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.prayedCount, prayedCount) || other.prayedCount == prayedCount));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FuneralEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.deceasedName, deceasedName) || other.deceasedName == deceasedName)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.mosqueName, mosqueName) || other.mosqueName == mosqueName)&&(identical(other.mosqueLocation, mosqueLocation) || other.mosqueLocation == mosqueLocation)&&(identical(other.lat, lat) || other.lat == lat)&&(identical(other.lng, lng) || other.lng == lng)&&(identical(other.prayerTime, prayerTime) || other.prayerTime == prayerTime)&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.isMosqueVerified, isMosqueVerified) || other.isMosqueVerified == isMosqueVerified)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.fatherName, fatherName) || other.fatherName == fatherName)&&(identical(other.burialLocation, burialLocation) || other.burialLocation == burialLocation)&&(identical(other.ageType, ageType) || other.ageType == ageType)&&(identical(other.funeralNotes, funeralNotes) || other.funeralNotes == funeralNotes)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.prayedCount, prayedCount) || other.prayedCount == prayedCount)&&(identical(other.reportCount, reportCount) || other.reportCount == reportCount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,deceasedName,gender,mosqueName,mosqueLocation,lat,lng,prayerTime,publisherId,isMosqueVerified,createdAt,fatherName,burialLocation,notes,photoUrl,prayedCount);
+int get hashCode => Object.hashAll([runtimeType,id,deceasedName,gender,mosqueName,mosqueLocation,lat,lng,prayerTime,publisherId,isMosqueVerified,createdAt,fatherName,burialLocation,ageType,funeralNotes,notes,photoUrl,prayedCount,reportCount]);
 
 @override
 String toString() {
-  return 'FuneralEntity(id: $id, deceasedName: $deceasedName, gender: $gender, mosqueName: $mosqueName, mosqueLocation: $mosqueLocation, lat: $lat, lng: $lng, prayerTime: $prayerTime, publisherId: $publisherId, isMosqueVerified: $isMosqueVerified, createdAt: $createdAt, fatherName: $fatherName, burialLocation: $burialLocation, notes: $notes, photoUrl: $photoUrl, prayedCount: $prayedCount)';
+  return 'FuneralEntity(id: $id, deceasedName: $deceasedName, gender: $gender, mosqueName: $mosqueName, mosqueLocation: $mosqueLocation, lat: $lat, lng: $lng, prayerTime: $prayerTime, publisherId: $publisherId, isMosqueVerified: $isMosqueVerified, createdAt: $createdAt, fatherName: $fatherName, burialLocation: $burialLocation, ageType: $ageType, funeralNotes: $funeralNotes, notes: $notes, photoUrl: $photoUrl, prayedCount: $prayedCount, reportCount: $reportCount)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $FuneralEntityCopyWith<$Res>  {
   factory $FuneralEntityCopyWith(FuneralEntity value, $Res Function(FuneralEntity) _then) = _$FuneralEntityCopyWithImpl;
 @useResult
 $Res call({
- String id, String deceasedName, String gender, String mosqueName, String mosqueLocation, double lat, double lng, DateTime prayerTime, String publisherId, bool isMosqueVerified, DateTime createdAt, String? fatherName, String? burialLocation, String? notes, String? photoUrl, int? prayedCount
+ String id, String deceasedName, String gender, String mosqueName, String mosqueLocation, double lat, double lng, DateTime prayerTime, String publisherId, bool isMosqueVerified, DateTime createdAt, String? fatherName, String? burialLocation, String? ageType, String? funeralNotes, String? notes, String? photoUrl, int? prayedCount, int? reportCount
 });
 
 
@@ -65,7 +65,7 @@ class _$FuneralEntityCopyWithImpl<$Res>
 
 /// Create a copy of FuneralEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? deceasedName = null,Object? gender = null,Object? mosqueName = null,Object? mosqueLocation = null,Object? lat = null,Object? lng = null,Object? prayerTime = null,Object? publisherId = null,Object? isMosqueVerified = null,Object? createdAt = null,Object? fatherName = freezed,Object? burialLocation = freezed,Object? notes = freezed,Object? photoUrl = freezed,Object? prayedCount = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? deceasedName = null,Object? gender = null,Object? mosqueName = null,Object? mosqueLocation = null,Object? lat = null,Object? lng = null,Object? prayerTime = null,Object? publisherId = null,Object? isMosqueVerified = null,Object? createdAt = null,Object? fatherName = freezed,Object? burialLocation = freezed,Object? ageType = freezed,Object? funeralNotes = freezed,Object? notes = freezed,Object? photoUrl = freezed,Object? prayedCount = freezed,Object? reportCount = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,deceasedName: null == deceasedName ? _self.deceasedName : deceasedName // ignore: cast_nullable_to_non_nullable
@@ -80,9 +80,12 @@ as String,isMosqueVerified: null == isMosqueVerified ? _self.isMosqueVerified : 
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,fatherName: freezed == fatherName ? _self.fatherName : fatherName // ignore: cast_nullable_to_non_nullable
 as String?,burialLocation: freezed == burialLocation ? _self.burialLocation : burialLocation // ignore: cast_nullable_to_non_nullable
+as String?,ageType: freezed == ageType ? _self.ageType : ageType // ignore: cast_nullable_to_non_nullable
+as String?,funeralNotes: freezed == funeralNotes ? _self.funeralNotes : funeralNotes // ignore: cast_nullable_to_non_nullable
 as String?,notes: freezed == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
 as String?,photoUrl: freezed == photoUrl ? _self.photoUrl : photoUrl // ignore: cast_nullable_to_non_nullable
 as String?,prayedCount: freezed == prayedCount ? _self.prayedCount : prayedCount // ignore: cast_nullable_to_non_nullable
+as int?,reportCount: freezed == reportCount ? _self.reportCount : reportCount // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
 }
@@ -168,10 +171,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String deceasedName,  String gender,  String mosqueName,  String mosqueLocation,  double lat,  double lng,  DateTime prayerTime,  String publisherId,  bool isMosqueVerified,  DateTime createdAt,  String? fatherName,  String? burialLocation,  String? notes,  String? photoUrl,  int? prayedCount)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String deceasedName,  String gender,  String mosqueName,  String mosqueLocation,  double lat,  double lng,  DateTime prayerTime,  String publisherId,  bool isMosqueVerified,  DateTime createdAt,  String? fatherName,  String? burialLocation,  String? ageType,  String? funeralNotes,  String? notes,  String? photoUrl,  int? prayedCount,  int? reportCount)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FuneralEntity() when $default != null:
-return $default(_that.id,_that.deceasedName,_that.gender,_that.mosqueName,_that.mosqueLocation,_that.lat,_that.lng,_that.prayerTime,_that.publisherId,_that.isMosqueVerified,_that.createdAt,_that.fatherName,_that.burialLocation,_that.notes,_that.photoUrl,_that.prayedCount);case _:
+return $default(_that.id,_that.deceasedName,_that.gender,_that.mosqueName,_that.mosqueLocation,_that.lat,_that.lng,_that.prayerTime,_that.publisherId,_that.isMosqueVerified,_that.createdAt,_that.fatherName,_that.burialLocation,_that.ageType,_that.funeralNotes,_that.notes,_that.photoUrl,_that.prayedCount,_that.reportCount);case _:
   return orElse();
 
 }
@@ -189,10 +192,10 @@ return $default(_that.id,_that.deceasedName,_that.gender,_that.mosqueName,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String deceasedName,  String gender,  String mosqueName,  String mosqueLocation,  double lat,  double lng,  DateTime prayerTime,  String publisherId,  bool isMosqueVerified,  DateTime createdAt,  String? fatherName,  String? burialLocation,  String? notes,  String? photoUrl,  int? prayedCount)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String deceasedName,  String gender,  String mosqueName,  String mosqueLocation,  double lat,  double lng,  DateTime prayerTime,  String publisherId,  bool isMosqueVerified,  DateTime createdAt,  String? fatherName,  String? burialLocation,  String? ageType,  String? funeralNotes,  String? notes,  String? photoUrl,  int? prayedCount,  int? reportCount)  $default,) {final _that = this;
 switch (_that) {
 case _FuneralEntity():
-return $default(_that.id,_that.deceasedName,_that.gender,_that.mosqueName,_that.mosqueLocation,_that.lat,_that.lng,_that.prayerTime,_that.publisherId,_that.isMosqueVerified,_that.createdAt,_that.fatherName,_that.burialLocation,_that.notes,_that.photoUrl,_that.prayedCount);case _:
+return $default(_that.id,_that.deceasedName,_that.gender,_that.mosqueName,_that.mosqueLocation,_that.lat,_that.lng,_that.prayerTime,_that.publisherId,_that.isMosqueVerified,_that.createdAt,_that.fatherName,_that.burialLocation,_that.ageType,_that.funeralNotes,_that.notes,_that.photoUrl,_that.prayedCount,_that.reportCount);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -209,10 +212,10 @@ return $default(_that.id,_that.deceasedName,_that.gender,_that.mosqueName,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String deceasedName,  String gender,  String mosqueName,  String mosqueLocation,  double lat,  double lng,  DateTime prayerTime,  String publisherId,  bool isMosqueVerified,  DateTime createdAt,  String? fatherName,  String? burialLocation,  String? notes,  String? photoUrl,  int? prayedCount)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String deceasedName,  String gender,  String mosqueName,  String mosqueLocation,  double lat,  double lng,  DateTime prayerTime,  String publisherId,  bool isMosqueVerified,  DateTime createdAt,  String? fatherName,  String? burialLocation,  String? ageType,  String? funeralNotes,  String? notes,  String? photoUrl,  int? prayedCount,  int? reportCount)?  $default,) {final _that = this;
 switch (_that) {
 case _FuneralEntity() when $default != null:
-return $default(_that.id,_that.deceasedName,_that.gender,_that.mosqueName,_that.mosqueLocation,_that.lat,_that.lng,_that.prayerTime,_that.publisherId,_that.isMosqueVerified,_that.createdAt,_that.fatherName,_that.burialLocation,_that.notes,_that.photoUrl,_that.prayedCount);case _:
+return $default(_that.id,_that.deceasedName,_that.gender,_that.mosqueName,_that.mosqueLocation,_that.lat,_that.lng,_that.prayerTime,_that.publisherId,_that.isMosqueVerified,_that.createdAt,_that.fatherName,_that.burialLocation,_that.ageType,_that.funeralNotes,_that.notes,_that.photoUrl,_that.prayedCount,_that.reportCount);case _:
   return null;
 
 }
@@ -224,7 +227,7 @@ return $default(_that.id,_that.deceasedName,_that.gender,_that.mosqueName,_that.
 @JsonSerializable()
 
 class _FuneralEntity implements FuneralEntity {
-  const _FuneralEntity({required this.id, required this.deceasedName, required this.gender, required this.mosqueName, required this.mosqueLocation, required this.lat, required this.lng, required this.prayerTime, required this.publisherId, required this.isMosqueVerified, required this.createdAt, this.fatherName, this.burialLocation, this.notes, this.photoUrl, this.prayedCount});
+  const _FuneralEntity({required this.id, required this.deceasedName, required this.gender, required this.mosqueName, required this.mosqueLocation, required this.lat, required this.lng, required this.prayerTime, required this.publisherId, required this.isMosqueVerified, required this.createdAt, this.fatherName, this.burialLocation, this.ageType, this.funeralNotes, this.notes, this.photoUrl, this.prayedCount, this.reportCount});
   factory _FuneralEntity.fromJson(Map<String, dynamic> json) => _$FuneralEntityFromJson(json);
 
 @override final  String id;
@@ -240,9 +243,12 @@ class _FuneralEntity implements FuneralEntity {
 @override final  DateTime createdAt;
 @override final  String? fatherName;
 @override final  String? burialLocation;
+@override final  String? ageType;
+@override final  String? funeralNotes;
 @override final  String? notes;
 @override final  String? photoUrl;
 @override final  int? prayedCount;
+@override final  int? reportCount;
 
 /// Create a copy of FuneralEntity
 /// with the given fields replaced by the non-null parameter values.
@@ -257,16 +263,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FuneralEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.deceasedName, deceasedName) || other.deceasedName == deceasedName)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.mosqueName, mosqueName) || other.mosqueName == mosqueName)&&(identical(other.mosqueLocation, mosqueLocation) || other.mosqueLocation == mosqueLocation)&&(identical(other.lat, lat) || other.lat == lat)&&(identical(other.lng, lng) || other.lng == lng)&&(identical(other.prayerTime, prayerTime) || other.prayerTime == prayerTime)&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.isMosqueVerified, isMosqueVerified) || other.isMosqueVerified == isMosqueVerified)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.fatherName, fatherName) || other.fatherName == fatherName)&&(identical(other.burialLocation, burialLocation) || other.burialLocation == burialLocation)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.prayedCount, prayedCount) || other.prayedCount == prayedCount));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FuneralEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.deceasedName, deceasedName) || other.deceasedName == deceasedName)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.mosqueName, mosqueName) || other.mosqueName == mosqueName)&&(identical(other.mosqueLocation, mosqueLocation) || other.mosqueLocation == mosqueLocation)&&(identical(other.lat, lat) || other.lat == lat)&&(identical(other.lng, lng) || other.lng == lng)&&(identical(other.prayerTime, prayerTime) || other.prayerTime == prayerTime)&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.isMosqueVerified, isMosqueVerified) || other.isMosqueVerified == isMosqueVerified)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.fatherName, fatherName) || other.fatherName == fatherName)&&(identical(other.burialLocation, burialLocation) || other.burialLocation == burialLocation)&&(identical(other.ageType, ageType) || other.ageType == ageType)&&(identical(other.funeralNotes, funeralNotes) || other.funeralNotes == funeralNotes)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.prayedCount, prayedCount) || other.prayedCount == prayedCount)&&(identical(other.reportCount, reportCount) || other.reportCount == reportCount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,deceasedName,gender,mosqueName,mosqueLocation,lat,lng,prayerTime,publisherId,isMosqueVerified,createdAt,fatherName,burialLocation,notes,photoUrl,prayedCount);
+int get hashCode => Object.hashAll([runtimeType,id,deceasedName,gender,mosqueName,mosqueLocation,lat,lng,prayerTime,publisherId,isMosqueVerified,createdAt,fatherName,burialLocation,ageType,funeralNotes,notes,photoUrl,prayedCount,reportCount]);
 
 @override
 String toString() {
-  return 'FuneralEntity(id: $id, deceasedName: $deceasedName, gender: $gender, mosqueName: $mosqueName, mosqueLocation: $mosqueLocation, lat: $lat, lng: $lng, prayerTime: $prayerTime, publisherId: $publisherId, isMosqueVerified: $isMosqueVerified, createdAt: $createdAt, fatherName: $fatherName, burialLocation: $burialLocation, notes: $notes, photoUrl: $photoUrl, prayedCount: $prayedCount)';
+  return 'FuneralEntity(id: $id, deceasedName: $deceasedName, gender: $gender, mosqueName: $mosqueName, mosqueLocation: $mosqueLocation, lat: $lat, lng: $lng, prayerTime: $prayerTime, publisherId: $publisherId, isMosqueVerified: $isMosqueVerified, createdAt: $createdAt, fatherName: $fatherName, burialLocation: $burialLocation, ageType: $ageType, funeralNotes: $funeralNotes, notes: $notes, photoUrl: $photoUrl, prayedCount: $prayedCount, reportCount: $reportCount)';
 }
 
 
@@ -277,7 +283,7 @@ abstract mixin class _$FuneralEntityCopyWith<$Res> implements $FuneralEntityCopy
   factory _$FuneralEntityCopyWith(_FuneralEntity value, $Res Function(_FuneralEntity) _then) = __$FuneralEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String deceasedName, String gender, String mosqueName, String mosqueLocation, double lat, double lng, DateTime prayerTime, String publisherId, bool isMosqueVerified, DateTime createdAt, String? fatherName, String? burialLocation, String? notes, String? photoUrl, int? prayedCount
+ String id, String deceasedName, String gender, String mosqueName, String mosqueLocation, double lat, double lng, DateTime prayerTime, String publisherId, bool isMosqueVerified, DateTime createdAt, String? fatherName, String? burialLocation, String? ageType, String? funeralNotes, String? notes, String? photoUrl, int? prayedCount, int? reportCount
 });
 
 
@@ -294,7 +300,7 @@ class __$FuneralEntityCopyWithImpl<$Res>
 
 /// Create a copy of FuneralEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? deceasedName = null,Object? gender = null,Object? mosqueName = null,Object? mosqueLocation = null,Object? lat = null,Object? lng = null,Object? prayerTime = null,Object? publisherId = null,Object? isMosqueVerified = null,Object? createdAt = null,Object? fatherName = freezed,Object? burialLocation = freezed,Object? notes = freezed,Object? photoUrl = freezed,Object? prayedCount = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? deceasedName = null,Object? gender = null,Object? mosqueName = null,Object? mosqueLocation = null,Object? lat = null,Object? lng = null,Object? prayerTime = null,Object? publisherId = null,Object? isMosqueVerified = null,Object? createdAt = null,Object? fatherName = freezed,Object? burialLocation = freezed,Object? ageType = freezed,Object? funeralNotes = freezed,Object? notes = freezed,Object? photoUrl = freezed,Object? prayedCount = freezed,Object? reportCount = freezed,}) {
   return _then(_FuneralEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,deceasedName: null == deceasedName ? _self.deceasedName : deceasedName // ignore: cast_nullable_to_non_nullable
@@ -309,9 +315,12 @@ as String,isMosqueVerified: null == isMosqueVerified ? _self.isMosqueVerified : 
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,fatherName: freezed == fatherName ? _self.fatherName : fatherName // ignore: cast_nullable_to_non_nullable
 as String?,burialLocation: freezed == burialLocation ? _self.burialLocation : burialLocation // ignore: cast_nullable_to_non_nullable
+as String?,ageType: freezed == ageType ? _self.ageType : ageType // ignore: cast_nullable_to_non_nullable
+as String?,funeralNotes: freezed == funeralNotes ? _self.funeralNotes : funeralNotes // ignore: cast_nullable_to_non_nullable
 as String?,notes: freezed == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
 as String?,photoUrl: freezed == photoUrl ? _self.photoUrl : photoUrl // ignore: cast_nullable_to_non_nullable
 as String?,prayedCount: freezed == prayedCount ? _self.prayedCount : prayedCount // ignore: cast_nullable_to_non_nullable
+as int?,reportCount: freezed == reportCount ? _self.reportCount : reportCount // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
 }

@@ -33,7 +33,7 @@ final class FuneralNotifierProvider
   FuneralNotifier create() => FuneralNotifier();
 }
 
-String _$funeralNotifierHash() => r'6f2e14892f2082c88eeaa9081554ad84b6c23f5f';
+String _$funeralNotifierHash() => r'a4b391a3c3eff127ea1f00fa934a1fc1c6e58817';
 
 abstract class _$FuneralNotifier extends $AsyncNotifier<void> {
   FutureOr<void> build();

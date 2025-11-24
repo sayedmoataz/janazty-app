@@ -19,9 +19,12 @@ abstract class FuneralEntity with _$FuneralEntity {
     required DateTime createdAt,
     String? fatherName,
     String? burialLocation,
+    String? ageType,
+    String? funeralNotes,
     String? notes,
     String? photoUrl,
     int? prayedCount,
+    int? reportCount,
   }) = _FuneralEntity;
 
   factory FuneralEntity.fromJson(Map<String, dynamic> json) =>
