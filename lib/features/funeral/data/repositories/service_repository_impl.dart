@@ -23,6 +23,19 @@ class ServiceRepositoryImpl implements ServiceRepository {
   }
 
   @override
+  Future<void> suggestNewServiceType(
+    String serviceName,
+    String description,
+    String example,
+  ) {
+    return _remoteDataSource.suggestNewServiceType(
+      serviceName,
+      description,
+      example,
+    );
+  }
+
+  @override
   Future<List<ServiceEntity>> getPendingServices() {
     return _remoteDataSource.getPendingServices();
   }

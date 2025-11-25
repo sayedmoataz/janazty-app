@@ -5,6 +5,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../domain/entity/service_entity.dart';
 import '../providers/service_provider.dart';
 import '../widgets/service_card.dart';
+import '../widgets/suggest_service_dialog.dart';
 
 class ServicesDirectoryScreen extends ConsumerStatefulWidget {
   const ServicesDirectoryScreen({super.key});
@@ -147,11 +148,9 @@ class _ServicesDirectoryScreenState
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // TODO: Navigate to add service screen
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('شاشة اقتراح خدمة - قريباً إن شاء الله'),
-            ),
+          showDialog(
+            context: context,
+            builder: (context) => const SuggestServiceDialog(),
           );
         },
         backgroundColor: AppColors.accent,

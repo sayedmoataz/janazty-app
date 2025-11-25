@@ -31,3 +31,14 @@ final suggestServiceProvider = FutureProvider.family<void, ServiceEntity>((
   final repository = ref.read(serviceRepositoryProvider);
   await repository.suggestService(service);
 });
+
+// Suggest a new service type
+final suggestNewServiceTypeProvider =
+    FutureProvider.family<void, Map<String, String>>((ref, data) async {
+      final repository = ref.read(serviceRepositoryProvider);
+      await repository.suggestNewServiceType(
+        data['serviceName']!,
+        data['description']!,
+        data['example']!,
+      );
+    });

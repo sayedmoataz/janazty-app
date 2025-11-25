@@ -14,6 +14,11 @@ abstract class ServiceRepository {
   Stream<List<ServiceEntity>> getApprovedServices();
   Stream<List<ServiceEntity>> getServicesByType(ServiceType type);
   Future<void> suggestService(ServiceEntity service);
+  Future<void> suggestNewServiceType(
+    String serviceName,
+    String description,
+    String example,
+  );
   Future<List<ServiceEntity>> getPendingServices();
   Future<void> approveService(String serviceId, String approvedBy);
 }

@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Services Collection
+    // Allow reading only approved services
+    match /services/{serviceId} {
+      allow read: if resource.data.status == 'approved';
+      allow write: if false; // Admin only
+    }
+
+    // Pending Services (Suggestions)
+    // Allow anyone to suggest a service and read pending services
+    match /pending_services/{serviceId} {
+      allow create: if true;
+      allow read: if true; // Allow reading pending services
+      allow update, delete: if false; // Admin only
+    }
+
+    // Funerals Collection
+    // Publicly accessible for reading and writing (adding funerals, updating counts)
+    match /funerals/{funeralId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Reports Collection
+    // Allow creating reports and reading them (used for client-side logic to hide funerals)
+    match /reports/{reportId} {
+      allow create: if true;
+      allow read: if true;
+      allow update, delete: if false;
+    }
+
+    // Prayer Guide Collection
+    // Static content, read-only
+    match /prayer_guide/{guideId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Service Type Suggestions Collection
+    // Allow anyone to suggest a new service type
+    match /service_type_suggestions/{suggestionId} {
+      allow create: if true;
+      allow read, update, delete: if false; // Admin only
+    }
+  }
+}
